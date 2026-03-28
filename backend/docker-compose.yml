@@ -1,0 +1,39 @@
+services:
+  mongo:
+    image: mongo:8
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo_data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/rs-init.js:ro
+    healthcheck:
+      # 等待副本集就绪（rs.status().ok == 1）
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'rs.status().ok' | tail -1 | grep -q 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 15
+      start_period: 15s
+    restart: unless-stopped
+
+  backend:
+    build: ./
+    environment:
+      MONGODB_URL: mongodb://mongo:27017/dish_menu?replicaSet=rs0
+    depends_on:
+      mongo:
+        condition: service_healthy
+    expose:
+      - "8000"
+    restart: on-failure
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
