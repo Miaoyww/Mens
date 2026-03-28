@@ -31,6 +31,14 @@ export interface DishUpdate {
 	category?: DishCategory;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeDish(raw: any): Dish {
+	return {
+		...raw,
+		id: raw.id ?? raw._id
+	};
+}
+
 export const dishes = writable<Dish[]>([]);
 export const loading = writable(false);
 export const error = writable<string | null>(null);
@@ -43,9 +51,10 @@ export async function fetchDishes(category?: DishCategory): Promise<void> {
 		if (category) url.searchParams.set('category', category);
 		const res = await fetch(url.toString());
 		if (!res.ok) throw new Error(`获取菜品失败：${res.status}`);
-		const data: Dish[] = await res.json();
+		const raw = await res.json();
+		const data: Dish[] = raw.map(normalizeDish);
 		dishes.set(data);
-        console.log("dishes", data);
+		console.log('dishes', data);
 
 	} catch (e) {
 		error.set(e instanceof Error ? e.message : String(e));
@@ -65,7 +74,7 @@ export async function createDish(params: DishCreate): Promise<Dish> {
 		const detail = await res.json().catch(() => ({}));
 		throw new Error(detail?.detail ?? `创建菜品失败：${res.status}`);
 	}
-	const dish: Dish = await res.json();
+	const dish: Dish = normalizeDish(await res.json());
 	dishes.update((list) => [...list, dish]);
 	return dish;
 }
@@ -81,7 +90,7 @@ export async function updateDish(id: string, params: DishUpdate): Promise<Dish> 
 		const detail = await res.json().catch(() => ({}));
 		throw new Error(detail?.detail ?? `更新菜品失败：${res.status}`);
 	}
-	const updated: Dish = await res.json();
+	const updated: Dish = normalizeDish(await res.json());
 	dishes.update((list) => list.map((d) => (d.id === id ? updated : d)));
 	return updated;
 }

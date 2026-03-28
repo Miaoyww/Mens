@@ -1,7 +1,7 @@
 <script lang="ts">
   import "../app.css";
   import RightSidebar from "$lib/components/sidebar/right-sidebar.svelte";
-  import SettingsDialog from "$lib/components/dialogs/settings-dialog.svelte";
+  import SettingsDialog from "$lib/components/dialog/settings-dialog.svelte";
 
   let { children } = $props();
 </script>
