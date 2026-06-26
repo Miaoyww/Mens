@@ -57,7 +57,7 @@
     }
 
     globalSettings.patch({ welcomeCompleted: true });
-    goto("/");
+    goto("/dashboard");
   }
 </script>
 

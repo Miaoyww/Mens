@@ -1,10 +1,10 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { Minus, X, Settings, Square, SquaresUnite } from "@lucide/svelte";
+  import { Minus, X, Settings, Square, SquaresUnite, PanelLeft } from "@lucide/svelte";
   import { MENS_NAME } from "$lib/const";
   import { Button } from "$lib/components/ui/button";
   import { isTauri } from "@tauri-apps/api/core";
-  import { settingsDialogOpen } from "$lib/stores/global-ui-store";
+  import { settingsDialogOpen, sidebarOpen } from "$lib/stores/global-ui-store";
   import favicon from "$lib/assets/favicon.png";
   import { onMount } from "svelte";
   import { page } from "$app/state";
@@ -14,6 +14,12 @@
   let appWindow = $state<any>(null);
   let isMaximized = $state(false);
   let titlebarVisible = $state(true);
+
+  let isDashboardRoute = $derived(page.url.pathname.startsWith("/dashboard"));
+
+  function toggleSidebar() {
+    sidebarOpen.update((v) => !v);
+  }
 
   $effect(() => {
     if (!isTauri()) return;
@@ -36,8 +42,20 @@
 </script>
 
 <div
-  class="fixed top-0 right-0 left-0 flex h-10 items-stretch border-b border-border/30 bg-background select-none"
+  class="fixed top-0 right-0 flex h-10 items-stretch border-b border-border/30 bg-background select-none transition-[left] duration-200 ease-linear"
+  style="left: {isDashboardRoute ? ($sidebarOpen ? '16rem' : '3rem') : '0'}"
 >
+  {#if isDashboardRoute}
+    <Button
+      class="flex items-center justify-center px-3 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+      variant="ghost"
+      onclick={toggleSidebar}
+      title="切换侧边栏"
+    >
+      <PanelLeft size={14} />
+    </Button>
+  {/if}
+
   <!-- 拖拽区域：占据所有剩余空间 -->
   <div class="flex-1" onmousedown={onDragMouseDown} role="none"></div>
 

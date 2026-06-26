@@ -14,8 +14,8 @@
       goto("/welcome");
       return;
     }
+    goto("/dashboard");
   });
-
 </script>
 
 <TitleBar />

@@ -6,7 +6,7 @@ export const settingsDialogOpen = writable(false);
 
 // ── Sidebar ────────────────────────────────────────────────────────────────
 
-export const leftBarPinned = writable(false);
+export const sidebarOpen = writable(true);
 export const rightBarPinned = writable(false);
 
 // ── Alert dialog ───────────────────────────────────────────────────────────
