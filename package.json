@@ -1,7 +1,7 @@
 {
 	"name": "mens",
 	"private": true,
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -50,6 +50,8 @@
 	},
 	"dependencies": {
 		"@tauri-apps/api": "^2",
+		"@tauri-apps/plugin-process": "^2.3.1",
+		"@tauri-apps/plugin-updater": "~2.10.1",
 		"animejs": "^4.3.6",
 		"tailwindcss-animate": "^1.0.7"
 	}

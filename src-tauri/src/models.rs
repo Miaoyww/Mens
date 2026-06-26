@@ -49,9 +49,8 @@ impl DishCreate {
 
 impl DishUpdate {
     pub fn parse_price(&self) -> Option<Result<f64, String>> {
-        self.price.as_ref().map(|p| {
-            p.parse::<f64>()
-                .map_err(|_| format!("无效的价格: {}", p))
-        })
+        self.price
+            .as_ref()
+            .map(|p| p.parse::<f64>().map_err(|_| format!("无效的价格: {}", p)))
     }
 }

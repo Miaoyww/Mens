@@ -20,10 +20,7 @@ impl AppState {
 // ── Dish commands ──────────────────────────────────────────────────────────
 
 #[tauri::command]
-pub fn get_dishes(
-    state: State<AppState>,
-    category: Option<String>,
-) -> Result<Vec<Dish>, String> {
+pub fn get_dishes(state: State<AppState>, category: Option<String>) -> Result<Vec<Dish>, String> {
     let db = state.db.lock().map_err(|e| format!("Lock error: {}", e))?;
 
     let dishes = if let Some(cat) = category {
@@ -52,10 +49,7 @@ pub fn get_dishes(
 }
 
 #[tauri::command]
-pub fn create_dish(
-    state: State<AppState>,
-    input: DishCreate,
-) -> Result<Dish, String> {
+pub fn create_dish(state: State<AppState>, input: DishCreate) -> Result<Dish, String> {
     let price = input.parse_price()?;
     let id = Uuid::new_v4().to_string();
 
@@ -80,11 +74,7 @@ pub fn create_dish(
 }
 
 #[tauri::command]
-pub fn update_dish(
-    state: State<AppState>,
-    id: String,
-    input: DishUpdate,
-) -> Result<Dish, String> {
+pub fn update_dish(state: State<AppState>, id: String, input: DishUpdate) -> Result<Dish, String> {
     let db = state.db.lock().map_err(|e| format!("Lock error: {}", e))?;
 
     // Fetch the existing dish

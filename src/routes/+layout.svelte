@@ -20,6 +20,24 @@
     }
     goto("/dashboard");
   });
+
+  // ── Auto-update check (startup) ──────────────────────────────
+  onMount(async () => {
+    // Don't check for updates in the display window
+    if (page.url.pathname === "/display") return;
+
+    try {
+      const { check } = await import("@tauri-apps/plugin-updater");
+      const update = await check();
+      if (update?.available) {
+        console.log(`[Updater] New version available: ${update.version}`);
+        // Store update info for the about page to pick up
+        (window as any).__pendingUpdate = update;
+      }
+    } catch {
+      // Silently ignore — update check failures shouldn't block the app
+    }
+  });
 </script>
 
 <TitleBar />
