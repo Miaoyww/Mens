@@ -1,23 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import type { Dish, DishCreate, DishUpdate, DishCategory, AuthUser } from '$lib/stores/types';
-
-// ── Auth ────────────────────────────────────────────────────────────────────
-
-export async function checkAuth(): Promise<AuthUser | null> {
-    return invoke<AuthUser | null>('check_auth');
-}
-
-export async function login(username: string, password: string): Promise<AuthUser> {
-    return invoke<AuthUser>('login', { username, password });
-}
-
-export async function logout(): Promise<void> {
-    return invoke<void>('logout');
-}
-
-export async function setupAdmin(username: string, password: string): Promise<AuthUser> {
-    return invoke<AuthUser>('setup_admin', { username, password });
-}
+import type { Dish, DishCreate, DishUpdate, DishCategory } from '$lib/types';
 
 // ── Dishes ──────────────────────────────────────────────────────────────────
 

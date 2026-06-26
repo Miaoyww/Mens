@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { fetchDishes as apiFetchDishes, createDish as apiCreateDish, updateDish as apiUpdateDish, deleteDish as apiDeleteDish } from '$lib/api';
-import type { Dish, DishCreate, DishUpdate, DishCategory } from '$lib/stores/types';
+import type { Dish, DishCreate, DishUpdate, DishCategory } from '$lib/types';
 
 export type { Dish, DishCreate, DishUpdate, DishCategory };
 

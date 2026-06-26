@@ -1,0 +1,27 @@
+.welcome-section-nav-item {
+	@apply relative;
+}
+
+.welcome-section-nav-button {
+	@apply h-auto min-h-[4.25rem] w-full justify-start gap-3 whitespace-normal rounded-l-xl rounded-r-none border-border/80 bg-background/80 px-4 py-3 pr-5 text-left text-sm hover:bg-muted/70;
+}
+
+.welcome-section-nav-button[data-active="true"] {
+	@apply border-primary bg-card shadow-sm;
+}
+
+.welcome-section-nav-status {
+	@apply pointer-events-none absolute right-0 top-1/2 grid size-6 translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border bg-card shadow-sm;
+}
+
+.welcome-section-nav-status[data-status="missing"] {
+	@apply border-red-200 bg-red-50 text-red-600;
+}
+
+.welcome-section-nav-status[data-status="complete"] {
+	@apply border-emerald-200 bg-emerald-50 text-emerald-600;
+}
+
+.welcome-section-nav-status[data-active="true"] {
+	@apply ring-2 ring-background;
+}

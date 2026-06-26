@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { RotateCcw } from '@lucide/svelte';
 
-	import { settingOpen } from '$lib/stores/setting-dialog-store';
+	import { settingsDialogOpen } from '$lib/stores/global-ui-store';
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut, linear } from 'svelte/easing';
 

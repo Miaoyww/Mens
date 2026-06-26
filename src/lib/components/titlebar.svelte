@@ -38,30 +38,8 @@
 <div
   class="fixed top-0 right-0 left-0 flex h-10 items-stretch border-b border-border/30 bg-background select-none"
 >
-  <!-- 应用名 -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div
-    class="flex w-28 shrink-0 items-center pl-4"
-    onmousedown={onDragMouseDown}
-  >
-    <img src={favicon} alt="App Logo" class="size-6 rounded-md mr-2" />
-
-    <span class="text-base font-semibold text-foreground/70 text-center">
-      {MENS_NAME}
-    </span>
-    <div class="mt-1 flex items-center">
-      <NavigationButton />
-      <NavigationButton direction="forward" />
-    </div>
-  </div>
-
-  <!-- 导航 -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div
-    class="flex flex-1 items-center justify-center gap-2"
-    onmousedown={onDragMouseDown}
-  >
-  </div>
+  <!-- 拖拽区域：占据所有剩余空间 -->
+  <div class="flex-1" onmousedown={onDragMouseDown} role="none"></div>
 
   <!-- 功能区 -->
   <div class="flex shrink-0 items-stretch">

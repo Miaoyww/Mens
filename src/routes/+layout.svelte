@@ -1,16 +1,24 @@
 <script lang="ts">
   import "../app.css";
-  import RightSidebar from "$lib/components/sidebar/right-sidebar.svelte";
-  import SettingsDialog from "$lib/components/dialog/settings-dialog.svelte";
+  import SettingsDialog from "$lib/components/settings/settings-dialog.svelte";
   import TitleBar from "$lib/components/titlebar.svelte";
   import { isTauri } from "@tauri-apps/api/core";
+  import { globalSettings } from "$lib/stores/global-settings-store";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
 
   let { children } = $props();
+
+  onMount(() => {
+    if (!$globalSettings.welcomeCompleted) {
+      goto("/welcome");
+      return;
+    }
+  });
+
 </script>
 
 <TitleBar />
-
-<RightSidebar />
 <SettingsDialog />
 
 <div class={isTauri() ? "pt-9" : ""}>
