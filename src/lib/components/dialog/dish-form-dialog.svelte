@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Save, Loader2, TriangleAlert } from "@lucide/svelte";
+  import { Save, Loader2, TriangleAlert, Upload, Link2, Trash2 } from "@lucide/svelte";
   import type { Dish, DishCategory } from "$lib/stores/dish-store";
   import { categoryOptions, effectivePrice, discountDisplay } from "$lib/stores/dish-store";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
@@ -36,17 +36,54 @@
   let formError = $state("");
   let submitting = $state(false);
 
+  // ── Image mode ────────────────────────────────────────
+  type ImageMode = 'url' | 'upload';
+  let imageMode = $state<ImageMode>('url');
+  let imagePreview = $state("");
+  let uploadError = $state("");
+
   $effect(() => {
     if (open) {
       name = dish?.name ?? "";
       price = dish?.price != null ? String(dish.price) : "";
-      image = dish?.image ?? "";
+      const img = dish?.image ?? '';
+      image = img;
+      imagePreview = img;
+      if (img.startsWith('data:')) {
+        imageMode = 'upload';
+      } else {
+        imageMode = 'url';
+      }
       discount = dish?.discount ?? 1.0;
       category = dish?.category ?? "hot";
       formError = "";
+      uploadError = "";
       submitting = false;
     }
   });
+
+  function handleFileSelect(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { uploadError = '图片大小不能超过 2MB'; return; }
+    if (!file.type.startsWith('image/')) { uploadError = '请选择图片文件'; return; }
+    uploadError = '';
+    const reader = new FileReader();
+    reader.onload = () => { const dataUri = reader.result as string; image = dataUri; imagePreview = dataUri; };
+    reader.onerror = () => { uploadError = '读取文件失败'; };
+    reader.readAsDataURL(file);
+  }
+
+  function clearImage() {
+    image = ''; imagePreview = ''; uploadError = '';
+    const input = document.getElementById('dish-file-upload') as HTMLInputElement;
+    if (input) input.value = '';
+  }
+
+  function updateUrlPreview(value: string) {
+    image = value; imagePreview = value.trim();
+  }
 
   async function submit() {
     formError = "";
@@ -156,16 +193,75 @@
         </div>
       </div>
 
-      <!-- 图片 URL -->
+      <!-- 图片 -->
       <div class="space-y-2">
-        <Label.Root for="dish-image">
-          图片 URL <span class="text-muted-foreground font-normal text-xs">（可选）</span>
-        </Label.Root>
-        <Input.Root id="dish-image" bind:value={image} placeholder="https://..." />
-        {#if image}
-          <div class="overflow-hidden rounded-lg bg-muted h-28">
+        <div class="flex items-center justify-between">
+          <Label.Root>菜品图片 <span class="text-muted-foreground font-normal text-xs">（可选）</span></Label.Root>
+          <div class="flex rounded-lg border border-border bg-muted/50 p-0.5">
+            <button
+              class="flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-all {imageMode === 'url' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}"
+              onclick={() => (imageMode = "url")}
+            >
+              <Link2 size={12} />URL
+            </button>
+            <button
+              class="flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-all {imageMode === 'upload' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}"
+              onclick={() => (imageMode = "upload")}
+            >
+              <Upload size={12} />上传
+            </button>
+          </div>
+        </div>
+
+        {#if imageMode === "url"}
+          <Input.Root
+            id="dish-image"
+            value={image}
+            oninput={(e) => updateUrlPreview(e.currentTarget.value)}
+            placeholder="https://..."
+          />
+        {:else}
+          <div class="space-y-2">
+            {#if !image}
+              <label
+                for="dish-file-upload"
+                class="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-border/70 bg-muted/30 px-4 py-6 text-center transition-colors hover:border-primary/40 hover:bg-muted/50"
+              >
+                <Upload size={20} class="text-muted-foreground" />
+                <span class="text-sm text-muted-foreground">点击选择图片</span>
+                <span class="text-xs text-muted-foreground/60">支持 JPG、PNG、WebP，最大 2MB</span>
+                <input
+                  id="dish-file-upload"
+                  type="file"
+                  accept="image/*"
+                  class="hidden"
+                  onchange={handleFileSelect}
+                />
+              </label>
+            {:else}
+              <div class="flex items-center gap-2">
+                <span class="flex-1 truncate text-xs text-muted-foreground">已上传 (base64)</span>
+                <Button.Root
+                  variant="ghost"
+                  size="xs"
+                  onclick={clearImage}
+                  class="text-destructive hover:text-destructive"
+                >
+                  <Trash2 size={12} />移除
+                </Button.Root>
+              </div>
+            {/if}
+          </div>
+        {/if}
+
+        {#if uploadError}
+          <p class="text-xs text-destructive">{uploadError}</p>
+        {/if}
+
+        {#if imagePreview}
+          <div class="overflow-hidden rounded-lg bg-muted h-32">
             <img
-              src={image}
+              src={imagePreview}
               alt="预览"
               class="w-full h-full object-cover"
               onerror={hideImageOnError}
