@@ -11,7 +11,9 @@
   });
 </script>
 
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+<div class="space-y-3">
+  <h2 class="text-sm font-semibold text-muted-foreground">菜品统计</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
   <Card.Root size="sm">
     <Card.Header class="pb-2">
       <Card.Description>全部</Card.Description>
@@ -51,4 +53,5 @@
     </Card.Header>
     <Card.Content class="text-xs text-muted-foreground">道</Card.Content>
   </Card.Root>
+</div>
 </div>

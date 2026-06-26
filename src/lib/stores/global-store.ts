@@ -16,6 +16,10 @@ export interface GlobalSettings {
     qrCodeUrl: string;
     /** WiFi info shown on public display */
     wifi: WifiInfo;
+    /** Show QR code on display page */
+    qrCodeEnabled: boolean;
+    /** Enable order system on display page */
+    orderEnabled: boolean;
 }
 
 // ── Defaults ───────────────────────────────────────────────────────────────
@@ -28,6 +32,8 @@ const DEFAULTS: GlobalSettings = {
         name: 'Restaurant_Guest',
         password: 'welcome888',
     },
+    qrCodeEnabled: false,
+    orderEnabled: false,
 };
 
 const STORAGE_KEY = 'mens_global_settings';
@@ -62,6 +68,24 @@ function persist(value: GlobalSettings) {
 
 function createGlobalSettingsStore() {
     const { subscribe, set, update } = writable<GlobalSettings>(load());
+
+    // ── Cross-window sync ───────────────────────────────────────
+    // When another window (e.g. dashboard) writes to localStorage,
+    // the display window picks up the change and updates reactively.
+    if (typeof window !== 'undefined') {
+        window.addEventListener('storage', (e) => {
+            if (e.key === STORAGE_KEY && e.newValue) {
+                try {
+                    const parsed = JSON.parse(e.newValue) as Partial<GlobalSettings>;
+                    set({
+                        ...DEFAULTS,
+                        ...parsed,
+                        wifi: { ...DEFAULTS.wifi, ...(parsed.wifi ?? {}) },
+                    });
+                } catch { /* ignore corrupt data */ }
+            }
+        });
+    }
 
     return {
         subscribe,

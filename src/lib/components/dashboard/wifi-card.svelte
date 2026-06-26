@@ -41,13 +41,6 @@
         <Input.Root id="wifi-password" bind:value={wifiPassword} placeholder="输入 WiFi 密码" />
       </div>
 
-      <!-- 预览 -->
-      <div class="bg-muted/50 border rounded-xl px-4 py-3 text-sm space-y-1">
-        <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">预览</span>
-        <p class="font-medium">📶 {wifiName || "—"}</p>
-        <p class="text-muted-foreground text-xs">密码：{wifiPassword || "—"}</p>
-      </div>
-
       <!-- 保存按钮 -->
       <Button.Root onclick={save} variant={saved ? "secondary" : "default"} size="sm">
         {#if saved}

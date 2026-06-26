@@ -8,16 +8,26 @@
   let wifiPassword = $derived($globalSettings.wifi.password);
 </script>
 
-<Card.Root
+<!-- <Card.Root
   size="sm"
   class={cn(
     "fixed bottom-8 left-8 z-20",
     "bg-background/90 backdrop-blur",
     "shadow-2xl border-blue-50",
   )}
+> -->
+<Card.Root
+  size="sm"
+  class={cn(
+    "fixed bottom-8 right-8 z-20",
+    "bg-background/90 backdrop-blur",
+    "shadow-2xl",
+  )}
 >
   <Card.Header>
-    <Card.Title class="flex items-center gap-2 text-blue-400 uppercase tracking-widest text-sm">
+    <Card.Title
+      class="flex items-center gap-2 text-blue-400 uppercase tracking-widest text-sm"
+    >
       <Wifi size={16} />
       WiFi
     </Card.Title>

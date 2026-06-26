@@ -9,15 +9,17 @@
   let { children } = $props();
 </script>
 
-<Sidebar.Provider bind:open={$sidebarOpen}>
+<Sidebar.Provider bind:open={$sidebarOpen} class="h-full">
   <AppSidebar />
   <Sidebar.Inset>
     <!-- Main -->
-    <div class="flex flex-1 flex-col p-5">
+    <div class="flex flex-1 flex-col p-5 overflow-hidden min-h-0">
       <ScrollArea class="h-full w-full">
-        {@render children?.()}
+        <div>
+          {@render children?.()}
+          <div class="h-30"></div>
+        </div>
       </ScrollArea>
     </div>
   </Sidebar.Inset>
 </Sidebar.Provider>
-

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { dishes, fetchDishes } from "$lib/stores/dish-store";
-  import DishCard from "$lib/components/cards/dish-card.svelte";
-  import BottomRightCard from "$lib/components/sidebar/bottom-right-card.svelte";
-  import BottomLeftCard from "$lib/components/sidebar/bottom-left-card.svelte";
-  import Header from "$lib/components/sidebar/header.svelte";
+  import DishCard from "$lib/components/display/cards/dish-card.svelte";
+  import BottomRightCard from "$lib/components/display/cards/bottom-right-card.svelte";
+  import BottomLeftCard from "$lib/components/display/cards/bottom-left-card.svelte";
+  import Header from "$lib/components/display/header.svelte";
 
   let scrollContainer: HTMLDivElement;
   let animationId: number;
