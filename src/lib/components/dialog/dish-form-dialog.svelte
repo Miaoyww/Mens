@@ -64,13 +64,18 @@
       await onsubmit({
         id: dish?.id ?? "",
         name: name.trim(),
-        price,
+        price: String(price),
         image: image.trim(),
         discount,
         category,
       });
     } catch (e) {
-      formError = e instanceof Error ? e.message : "操作失败，请重试";
+      console.error("菜品提交失败:", e);
+      const msg =
+        e instanceof Error ? e.message
+        : typeof e === "string" ? e
+        : JSON.stringify(e, null, 2);
+      formError = msg || "操作失败，请重试";
     } finally {
       submitting = false;
     }
@@ -115,7 +120,7 @@
             class="h-9 w-full rounded-4xl border border-input bg-input/30 px-3 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
           >
             {#each categoryOptions as opt}
-              <option value={opt.value}>{opt.emoji} {opt.label}</option>
+              <option value={opt.value}>{opt.label}</option>
             {/each}
           </select>
         </div>

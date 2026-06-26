@@ -1,4 +1,3 @@
-use crate::db;
 use crate::models::*;
 use rusqlite::params;
 use std::sync::Mutex;
@@ -8,119 +7,14 @@ use uuid::Uuid;
 /// Shared application state held by Tauri.
 pub struct AppState {
     pub db: Mutex<rusqlite::Connection>,
-    pub current_user: Mutex<Option<AuthUser>>,
 }
 
 impl AppState {
     pub fn new(conn: rusqlite::Connection) -> Self {
         Self {
             db: Mutex::new(conn),
-            current_user: Mutex::new(None),
         }
     }
-}
-
-// ── Auth commands ──────────────────────────────────────────────────────────
-
-#[tauri::command]
-pub fn check_auth(state: State<AppState>) -> Result<Option<AuthUser>, String> {
-    let user = state
-        .current_user
-        .lock()
-        .map_err(|e| format!("Lock error: {}", e))?;
-    Ok(user.clone())
-}
-
-#[tauri::command]
-pub fn login(
-    state: State<AppState>,
-    username: String,
-    password: String,
-) -> Result<AuthUser, String> {
-    let hash = db::sha256_hex(&password);
-    let db = state.db.lock().map_err(|e| format!("Lock error: {}", e))?;
-
-    let user: Option<AuthUser> = db
-        .query_row(
-            "SELECT username, role FROM users WHERE username = ?1 AND password_sha256 = ?2",
-            params![username, hash],
-            |row| {
-                Ok(AuthUser {
-                    username: row.get(0)?,
-                    role: row.get(1)?,
-                })
-            },
-        )
-        .ok();
-
-    match user {
-        Some(u) => {
-            let mut current = state
-                .current_user
-                .lock()
-                .map_err(|e| format!("Lock error: {}", e))?;
-            *current = Some(u.clone());
-            log::info!("User '{}' logged in", u.username);
-            Ok(u)
-        }
-        None => Err("用户名或密码错误".into()),
-    }
-}
-
-#[tauri::command]
-pub fn logout(state: State<AppState>) -> Result<(), String> {
-    let mut user = state
-        .current_user
-        .lock()
-        .map_err(|e| format!("Lock error: {}", e))?;
-    *user = None;
-    log::info!("User logged out");
-    Ok(())
-}
-
-#[tauri::command]
-pub fn setup_admin(
-    state: State<AppState>,
-    username: String,
-    password: String,
-) -> Result<AuthUser, String> {
-    let db = state.db.lock().map_err(|e| format!("Lock error: {}", e))?;
-
-    // Only allow setup if no users exist
-    let count: i64 = db
-        .query_row("SELECT COUNT(*) FROM users", [], |r| r.get(0))
-        .map_err(|e| e.to_string())?;
-
-    if count > 0 {
-        return Err("系统已初始化，不能重复设置管理员".into());
-    }
-
-    let hash = db::sha256_hex(&password);
-    db.execute(
-        "INSERT INTO users (username, password_sha256, role) VALUES (?1, ?2, 'admin')",
-        params![username, hash],
-    )
-    .map_err(|e| {
-        if e.to_string().contains("UNIQUE") {
-            format!("用户名 '{}' 已存在", username)
-        } else {
-            e.to_string()
-        }
-    })?;
-
-    let user = AuthUser {
-        username,
-        role: "admin".into(),
-    };
-
-    let mut current = state
-        .current_user
-        .lock()
-        .map_err(|e| format!("Lock error: {}", e))?;
-    *current = Some(user.clone());
-
-    log::info!("Admin '{}' created via setup", user.username);
-    Ok(user)
 }
 
 // ── Dish commands ──────────────────────────────────────────────────────────
@@ -162,8 +56,6 @@ pub fn create_dish(
     state: State<AppState>,
     input: DishCreate,
 ) -> Result<Dish, String> {
-    require_admin(&state)?;
-
     let price = input.parse_price()?;
     let id = Uuid::new_v4().to_string();
 
@@ -193,8 +85,6 @@ pub fn update_dish(
     id: String,
     input: DishUpdate,
 ) -> Result<Dish, String> {
-    require_admin(&state)?;
-
     let db = state.db.lock().map_err(|e| format!("Lock error: {}", e))?;
 
     // Fetch the existing dish
@@ -239,8 +129,6 @@ pub fn update_dish(
 
 #[tauri::command]
 pub fn delete_dish(state: State<AppState>, id: String) -> Result<(), String> {
-    require_admin(&state)?;
-
     let db = state.db.lock().map_err(|e| format!("Lock error: {}", e))?;
     let affected = db
         .execute("DELETE FROM dishes WHERE id = ?1", params![id])
@@ -265,16 +153,4 @@ fn map_dish(row: &rusqlite::Row<'_>) -> rusqlite::Result<Dish> {
         discount: row.get(4)?,
         category: row.get(5)?,
     })
-}
-
-fn require_admin(state: &State<AppState>) -> Result<(), String> {
-    let user = state
-        .current_user
-        .lock()
-        .map_err(|e| format!("Lock error: {}", e))?;
-    match user.as_ref() {
-        Some(u) if u.role == "admin" => Ok(()),
-        Some(_) => Err("需要管理员权限".into()),
-        None => Err("请先登录".into()),
-    }
 }

@@ -9,7 +9,7 @@ use tauri::Manager;
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
-            // Initialize the database, auto-create admin if needed
+            // Initialize the database
             let conn = db::init_db(app).expect("Failed to initialize database");
 
             // Store the connection in managed state
@@ -27,10 +27,6 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            commands::check_auth,
-            commands::login,
-            commands::logout,
-            commands::setup_admin,
             commands::get_dishes,
             commands::create_dish,
             commands::update_dish,

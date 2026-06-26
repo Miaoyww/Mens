@@ -55,11 +55,3 @@ impl DishUpdate {
         })
     }
 }
-
-// ── Auth models ────────────────────────────────────────────────────────────
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct AuthUser {
-    pub username: String,
-    pub role: String,
-}
