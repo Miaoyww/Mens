@@ -16,7 +16,7 @@
     ChevronLeft,
     RefreshCw,
     UtensilsCrossed,
-    AlertTriangle,
+    TriangleAlert,
     X,
     ChefHat,
   } from "@lucide/svelte";
@@ -27,6 +27,11 @@
   import AdminDeleteDialog from "$lib/components/dialog/admin-delete-dialog.svelte";
   import AdminWifiSection from "$lib/components/settings/cards/admin-wifi-section.svelte";
   import { categoryOptions } from "$lib/stores/admin-store";
+  import { openDisplayWindow } from "$lib/utils/display-window";
+  import * as Card from "$lib/components/ui/card/index.js";
+  import * as Button from "$lib/components/ui/button/index.js";
+  import * as Input from "$lib/components/ui/input/index.js";
+  import * as Separator from "$lib/components/ui/separator/index.js";
 
   // ─── Filter / Search ──────────────────────────────────────
   let searchQuery = $state("");
@@ -34,8 +39,7 @@
 
   let filteredDishes = $derived(
     $dishes.filter((d) => {
-      const matchCat =
-        filterCategory === "all" || d.category === filterCategory;
+      const matchCat = filterCategory === "all" || d.category === filterCategory;
       const matchSearch =
         !searchQuery ||
         d.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -126,191 +130,123 @@
   });
 </script>
 
-<div class="inset-0 bg-slate-50 overflow-y-auto">
-  <!-- HEADER -->
-  <header
-    class="sticky top-0 z-10 bg-linear-to-r from-blue-800 via-blue-700 to-indigo-700 shadow-xl"
-  >
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <a
-          href="/"
-          class="flex items-center gap-1.5 text-blue-200 hover:text-white hover:bg-white/10 px-3 py-1.5 rounded-lg transition-all text-sm font-medium"
-        >
-          <ChevronLeft size={15} />返回展示
-        </a>
-        <div class="w-px h-5 bg-blue-500 opacity-60"></div>
-        <div class="flex items-center gap-2.5">
-          <div
-            class="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center"
-          >
-            <ChefHat size={16} class="text-white" />
-          </div>
-          <div>
-            <h1
-              class="text-white font-bold text-base leading-tight tracking-wide"
-            >
-              菜单管理后台
-            </h1>
-            <p class="text-blue-300 text-[11px] leading-tight">
-              Menu Administration
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <button
-          onclick={() => fetchDishes()}
-          class="flex items-center gap-1.5 text-sm text-blue-200 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/10 transition-all"
-        >
-          <RefreshCw size={13} />刷新数据
-        </button>
-        <span class="text-blue-300 text-sm hidden sm:block">
-          {new Date().toLocaleDateString("zh-CN", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </span>
-      </div>
-    </div>
-  </header>
-
-  <!-- TOASTS -->
+<!-- TOASTS -->
   {#if successMsg}
     <div
       transition:fly={{ y: -16, duration: 250 }}
-      class="fixed top-20 left-1/2 -translate-x-1/2 z-10000 flex items-center gap-2 bg-emerald-500 text-white px-5 py-2.5 rounded-xl shadow-2xl text-sm font-medium pointer-events-none"
+      class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium pointer-events-none"
     >
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="3"
-        stroke-linecap="round"
-        stroke-linejoin="round"><polyline points="20,6 9,17 4,12" /></svg
-      >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12" /></svg>
       {successMsg}
     </div>
   {/if}
   {#if globalError}
     <div
       transition:fly={{ y: -16, duration: 250 }}
-      class="fixed top-20 left-1/2 -translate-x-1/2 z-10000 flex items-center gap-2 bg-red-500 text-white px-5 py-2.5 rounded-xl shadow-2xl text-sm font-medium"
+      class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-destructive text-destructive-foreground px-4 py-2 rounded-lg shadow-lg text-sm font-medium"
     >
-      <AlertTriangle size={14} />
+      <TriangleAlert size={14} />
       {globalError}
-      <button
-        onclick={() => (globalError = "")}
-        class="ml-2 opacity-70 hover:opacity-100"><X size={13} /></button
-      >
+      <button onclick={() => (globalError = "")} class="ml-2 opacity-70 hover:opacity-100"><X size={13} /></button>
     </div>
   {/if}
 
-  <!-- MAIN -->
-  <main class="max-w-7xl mx-auto px-6 py-8 space-y-7 pb-16">
-    <!-- 统计卡片 -->
-    <AdminStats />
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <Button.Root variant="outline" size="sm" onclick={openDisplayWindow}>
+        <ChevronLeft size={14} />返回展示
+      </Button.Root>
+      <Separator.Root orientation="vertical" class="h-5" />
+      <div class="flex items-center gap-2">
+        <ChefHat size={18} class="text-muted-foreground" />
+        <div>
+          <h1 class="text-base font-semibold leading-tight">菜单管理后台</h1>
+          <p class="text-xs text-muted-foreground">Menu Administration</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <Button.Root variant="ghost" size="sm" onclick={() => fetchDishes()}>
+        <RefreshCw size={13} />刷新数据
+      </Button.Root>
+      <span class="text-xs text-muted-foreground hidden sm:block">
+        {new Date().toLocaleDateString("zh-CN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </span>
+    </div>
+  </div>
 
-    <!-- 菜品管理表格 -->
-    <section
-      class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
-    >
-      <!-- Toolbar -->
-      <div
-        class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-3"
-      >
+  <!-- 统计卡片 -->
+  <AdminStats />
+
+  <!-- 菜品管理 -->
+  <Card.Root>
+    <Card.Header class="pb-0">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <div class="flex items-center gap-2 shrink-0">
-          <UtensilsCrossed size={17} class="text-blue-600" />
-          <h2 class="text-base font-bold text-slate-800">菜品管理</h2>
-          <span
-            class="ml-0.5 bg-slate-100 text-slate-500 text-[11px] font-semibold px-2 py-0.5 rounded-full"
-          >
+          <UtensilsCrossed size={16} class="text-muted-foreground" />
+          <Card.Title class="text-base">菜品管理</Card.Title>
+          <span class="bg-muted text-muted-foreground text-xs font-medium px-2 py-0.5 rounded-md">
             {filteredDishes.length} 道
           </span>
         </div>
-        <div
-          class="flex flex-wrap items-center gap-2 sm:ml-auto w-full sm:w-auto"
-        >
-          <!-- 搜索菜品 -->
+        <div class="flex flex-wrap items-center gap-2 sm:ml-auto w-full sm:w-auto">
+          <!-- 搜索 -->
           <div class="relative w-full sm:w-52">
-            <Search
-              size={13}
-              class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-            <input
-              bind:value={searchQuery}
-              placeholder="搜索菜品..."
-              class="w-full pl-8 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400 transition-all"
-            />
+            <Search size={13} class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input.Root bind:value={searchQuery} placeholder="搜索菜品..." class="pl-8" />
           </div>
           <!-- 分类筛选 -->
-          <div class="flex bg-slate-100 rounded-xl p-0.5 text-[12px] shrink-0">
-            <button
+          <div class="flex gap-1">
+            <Button.Root
+              variant={filterCategory === "all" ? "secondary" : "ghost"}
+              size="xs"
               onclick={() => (filterCategory = "all")}
-              class="{filterCategory === 'all'
-                ? 'bg-white shadow-sm text-slate-800'
-                : 'text-slate-500'} px-3 py-1.5 rounded-[10px] transition-all font-medium"
-              >全部</button
-            >
+            >全部</Button.Root>
             {#each categoryOptions as opt}
-              <button
+              <Button.Root
+                variant={filterCategory === opt.value ? "secondary" : "ghost"}
+                size="xs"
                 onclick={() => (filterCategory = opt.value)}
-                class="{filterCategory === opt.value
-                  ? 'bg-white shadow-sm text-slate-800'
-                  : 'text-slate-500'} px-3 py-1.5 rounded-[10px] transition-all font-medium"
-                >{opt.emoji} {opt.label}</button
-              >
+              >{opt.emoji} {opt.label}</Button.Root>
             {/each}
           </div>
-          <!-- 添加按钮 -->
-          <button
-            onclick={openAdd}
-            class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-sm hover:shadow-md"
-          >
+          <Button.Root size="sm" onclick={openAdd}>
             <Plus size={14} />添加菜品
-          </button>
+          </Button.Root>
         </div>
       </div>
-
-      <!-- Table / Empty state -->
+    </Card.Header>
+    <Card.Content class="pt-4">
+      <!-- Table -->
       {#if filteredDishes.length === 0}
         <div class="py-24 text-center">
-          <div
-            class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4"
-          >
-            <UtensilsCrossed size={28} class="text-slate-300" />
+          <div class="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <UtensilsCrossed size={28} class="text-muted-foreground/50" />
           </div>
-          <p class="text-slate-400 text-sm">暂无菜品数据</p>
-          <button
-            onclick={openAdd}
-            class="mt-4 text-sm text-blue-500 hover:text-blue-700 font-medium"
-          >
-            + 添加第一道菜?
-          </button>
+          <p class="text-muted-foreground text-sm">暂无菜品数据</p>
+          <Button.Root variant="link" size="sm" onclick={openAdd} class="mt-2">
+            + 添加第一道菜
+          </Button.Root>
         </div>
       {:else}
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto -mx-6">
           <table class="w-full">
             <thead>
-              <tr class="bg-slate-50/70 border-b border-slate-100">
-                {#each ["菜品", "分类", "原价", "折扣", "实售价"] as col}
-                  <th
-                    class="text-left text-[11px] font-bold text-slate-400 uppercase tracking-wider px-{col ===
-                    '菜品'
-                      ? '6'
-                      : '4'} py-3">{col}</th
-                  >
-                {/each}
-                <th
-                  class="text-right text-[11px] font-bold text-slate-400 uppercase tracking-wider px-6 py-3"
-                  >操作</th
-                >
+              <tr class="border-b">
+                <th class="text-left text-xs font-medium text-muted-foreground px-4 py-2">菜品</th>
+                <th class="text-left text-xs font-medium text-muted-foreground px-4 py-2">分类</th>
+                <th class="text-left text-xs font-medium text-muted-foreground px-4 py-2">原价</th>
+                <th class="text-left text-xs font-medium text-muted-foreground px-4 py-2">折扣</th>
+                <th class="text-left text-xs font-medium text-muted-foreground px-4 py-2">实售价</th>
+                <th class="text-right text-xs font-medium text-muted-foreground px-4 py-2">操作</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody>
               {#each filteredDishes as dish (dish.id)}
                 <AdminDishCard {dish} onedit={openEdit} ondelete={openDelete} />
               {/each}
@@ -318,16 +254,15 @@
           </table>
         </div>
       {/if}
-    </section>
+    </Card.Content>
+  </Card.Root>
 
-    <!-- WiFi 设置 -->
-    <AdminWifiSection />
-  </main>
-</div>
+  <!-- WiFi 设置 -->
+  <AdminWifiSection />
 
 <!-- 添加/编辑弹窗 -->
 <AdminDishFormDialog
-  open={showFormDialog}
+  bind:open={showFormDialog}
   mode={dialogMode}
   dish={editingDish}
   onsubmit={handleFormSubmit}
@@ -336,7 +271,7 @@
 
 <!-- 删除确认弹窗 -->
 <AdminDeleteDialog
-  open={showDeleteDialog}
+  bind:open={showDeleteDialog}
   dish={deletingDish}
   onconfirm={handleDelete}
   onclose={() => (showDeleteDialog = false)}

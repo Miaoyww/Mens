@@ -1,79 +1,61 @@
 <script lang="ts">
-	import { Wifi, Save } from '@lucide/svelte';
-	import { globalSettings } from '$lib/stores/global-store';
+  import { Wifi, Save, Check } from "@lucide/svelte";
+  import { globalSettings } from "$lib/stores/global-store";
+  import * as Card from "$lib/components/ui/card/index.js";
+  import * as Input from "$lib/components/ui/input/index.js";
+  import * as Label from "$lib/components/ui/label/index.js";
+  import * as Button from "$lib/components/ui/button/index.js";
+  import * as Separator from "$lib/components/ui/separator/index.js";
 
-	let wifiName = $state($globalSettings.wifi.name);
-	let wifiPassword = $state($globalSettings.wifi.password);
+  let wifiName = $state($globalSettings.wifi.name);
+  let wifiPassword = $state($globalSettings.wifi.password);
+  let saved = $state(false);
 
-	let saved = $state(false);
-
-	function save() {
-		globalSettings.patch({ wifi: { name: wifiName.trim(), password: wifiPassword.trim() } });
-		saved = true;
-		setTimeout(() => (saved = false), 2500);
-	}
+  function save() {
+    globalSettings.patch({ wifi: { name: wifiName.trim(), password: wifiPassword.trim() } });
+    saved = true;
+    setTimeout(() => (saved = false), 2500);
+  }
 </script>
 
-<section class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-	<!-- Section Header -->
-	<div class="px-6 py-4 border-b border-slate-100 flex items-center gap-2.5">
-		<div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-			<Wifi size={15} class="text-blue-600" />
-		</div>
-		<div>
-			<h2 class="text-base font-bold text-slate-800 leading-tight">WiFi 设置</h2>
-			<p class="text-[11px] text-slate-400">修改展示页面底部显示的 WiFi 信息</p>
-		</div>
-	</div>
+<Card.Root>
+  <Card.Header>
+    <Card.Title class="flex items-center gap-2 text-base">
+      <Wifi size={16} class="text-muted-foreground" />
+      WiFi 设置
+    </Card.Title>
+    <Card.Description>修改展示页面底部显示的 WiFi 信息</Card.Description>
+  </Card.Header>
+  <Separator.Root />
+  <Card.Content class="pt-6">
+    <div class="max-w-sm space-y-4">
+      <!-- 网络名称 -->
+      <div class="space-y-2">
+        <Label.Root for="wifi-name">网络名称 <span class="text-muted-foreground font-normal">(SSID)</span></Label.Root>
+        <Input.Root id="wifi-name" bind:value={wifiName} placeholder="例：Restaurant_Guest" />
+      </div>
 
-	<div class="px-6 py-6">
-		<div class="max-w-sm space-y-4">
-			<!-- 网络名称 -->
-			<div class="space-y-1.5">
-				<label for="wifi-name" class="text-sm font-semibold text-slate-700">
-					网络名称 <span class="text-slate-400 font-normal">(SSID)</span>
-				</label>
-				<input
-					id="wifi-name"
-					bind:value={wifiName}
-					placeholder="例：Restaurant_Guest"
-					class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400 transition-all"
-				/>
-			</div>
+      <!-- 密码 -->
+      <div class="space-y-2">
+        <Label.Root for="wifi-password">密码</Label.Root>
+        <Input.Root id="wifi-password" bind:value={wifiPassword} placeholder="输入 WiFi 密码" />
+      </div>
 
-			<!-- 密码 -->
-			<div class="space-y-1.5">
-				<label for="wifi-password" class="text-sm font-semibold text-slate-700">密码</label>
-				<input
-					id="wifi-password"
-					bind:value={wifiPassword}
-					placeholder="输入 WiFi 密码"
-					class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400 transition-all"
-				/>
-			</div>
+      <!-- 预览 -->
+      <div class="bg-muted/50 border rounded-xl px-4 py-3 text-sm space-y-1">
+        <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">预览</span>
+        <p class="font-medium">📶 {wifiName || "—"}</p>
+        <p class="text-muted-foreground text-xs">密码：{wifiPassword || "—"}</p>
+      </div>
 
-			<!-- 预览 -->
-			<div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm">
-				<span class="text-[11px] font-bold uppercase tracking-widest text-slate-400">预览</span>
-				<p class="mt-1 font-medium text-slate-700">📶 {wifiName || '—'}</p>
-				<p class="text-slate-500">密码：{wifiPassword || '—'}</p>
-			</div>
-
-			<!-- 保存按钮 -->
-			<button
-				onclick={save}
-				class="flex items-center gap-2 {saved
-					? 'bg-emerald-500 hover:bg-emerald-600'
-					: 'bg-blue-600 hover:bg-blue-700'} active:scale-95 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md"
-			>
-				{#if saved}
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
-					已保存
-				{:else}
-					<Save size={14} />
-					保存 WiFi 设置
-				{/if}
-			</button>
-		</div>
-	</div>
-</section>
+      <!-- 保存按钮 -->
+      <Button.Root onclick={save} variant={saved ? "secondary" : "default"} size="sm">
+        {#if saved}
+          <Check size={14} />已保存
+        {:else}
+          <Save size={14} />保存 WiFi 设置
+        {/if}
+      </Button.Root>
+    </div>
+  </Card.Content>
+</Card.Root>

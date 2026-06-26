@@ -5,11 +5,16 @@
   import { isTauri } from "@tauri-apps/api/core";
   import { globalSettings } from "$lib/stores/global-settings-store";
   import { goto } from "$app/navigation";
+  import { page } from "$app/state";
   import { onMount } from "svelte";
 
   let { children } = $props();
 
   onMount(() => {
+    // Only redirect from the root path — other routes (e.g. /display
+    // opened in a separate window) should load without interference.
+    if (page.url.pathname !== "/") return;
+
     if (!$globalSettings.welcomeCompleted) {
       goto("/welcome");
       return;

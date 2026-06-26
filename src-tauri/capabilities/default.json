@@ -3,7 +3,8 @@
   "identifier": "default",
   "description": "enables the default permissions and custom titlebar window controls",
   "windows": [
-    "main"
+    "main",
+    "display"
   ],
   "permissions": [
     "core:default",
@@ -12,6 +13,13 @@
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",
     "core:window:allow-is-maximized",
-    "core:window:allow-set-decorations"
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-set-decorations",
+    "core:window:allow-show",
+    "core:window:allow-set-focus",
+    "core:window:allow-unminimize",
+    "core:window:allow-unmaximize",
+    "core:webview:allow-create-webview-window"
   ]
 }
