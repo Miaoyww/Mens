@@ -51,11 +51,9 @@
 
 <Sidebar.Root bind:ref {collapsible} {...restProps}>
   <Sidebar.Header>
-    <div class="flex items-center gap-2 px-2 py-1">
-      <div
-        class="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
-      >
-        <img src={favicon} alt="Logo" class="size-8" />
+    <div class="flex gap-2 px-2 py-1">
+      <div class="flex aspect-square size-8 justify-center rounded-lg">
+        <img src={favicon} alt="Logo" class="size-6" />
       </div>
       <div class="grid flex-1 text-start text-sm leading-tight">
         <span class="truncate font-semibold">Mens</span>
