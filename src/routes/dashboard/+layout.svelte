@@ -13,8 +13,8 @@
   <AppSidebar />
   <Sidebar.Inset>
     <!-- Main -->
-    <div class="flex p-5 pt-5 overflow-hidden">
-      <ScrollArea class="flex-1">
+    <div class="flex flex-1 flex-col p-5">
+      <ScrollArea class="h-full w-full">
         {@render children?.()}
       </ScrollArea>
     </div>

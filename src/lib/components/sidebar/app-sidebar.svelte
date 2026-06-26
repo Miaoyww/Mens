@@ -1,171 +1,93 @@
-<script lang="ts" module>
-	import AudioWaveformIcon from "@lucide/svelte/icons/audio-waveform";
-	import BookOpenIcon from "@lucide/svelte/icons/book-open";
-	import BotIcon from "@lucide/svelte/icons/bot";
-	import ChartPieIcon from "@lucide/svelte/icons/chart-pie";
-	import CommandIcon from "@lucide/svelte/icons/command";
-	import FrameIcon from "@lucide/svelte/icons/frame";
-	import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
-	import MapIcon from "@lucide/svelte/icons/map";
-	import Settings2Icon from "@lucide/svelte/icons/settings-2";
-	import SquareTerminalIcon from "@lucide/svelte/icons/square-terminal";
-
-	// This is sample data.
-	const data = {
-		user: {
-			name: "shadcn",
-			email: "m@example.com",
-			avatar: "/avatars/shadcn.jpg",
-		},
-		teams: [
-			{
-				name: "Acme Inc",
-				logo: GalleryVerticalEndIcon,
-				plan: "Enterprise",
-			},
-			{
-				name: "Acme Corp.",
-				logo: AudioWaveformIcon,
-				plan: "Startup",
-			},
-			{
-				name: "Evil Corp.",
-				logo: CommandIcon,
-				plan: "Free",
-			},
-		],
-		navMain: [
-			{
-				title: "Playground",
-				url: "#",
-				icon: SquareTerminalIcon,
-				isActive: true,
-				items: [
-					{
-						title: "History",
-						url: "#",
-					},
-					{
-						title: "Starred",
-						url: "#",
-					},
-					{
-						title: "Settings",
-						url: "#",
-					},
-				],
-			},
-			{
-				title: "Models",
-				url: "#",
-				icon: BotIcon,
-				items: [
-					{
-						title: "Genesis",
-						url: "#",
-					},
-					{
-						title: "Explorer",
-						url: "#",
-					},
-					{
-						title: "Quantum",
-						url: "#",
-					},
-				],
-			},
-			{
-				title: "Documentation",
-				url: "#",
-				icon: BookOpenIcon,
-				items: [
-					{
-						title: "Introduction",
-						url: "#",
-					},
-					{
-						title: "Get Started",
-						url: "#",
-					},
-					{
-						title: "Tutorials",
-						url: "#",
-					},
-					{
-						title: "Changelog",
-						url: "#",
-					},
-				],
-			},
-			{
-				title: "Settings",
-				url: "#",
-				icon: Settings2Icon,
-				items: [
-					{
-						title: "General",
-						url: "#",
-					},
-					{
-						title: "Team",
-						url: "#",
-					},
-					{
-						title: "Billing",
-						url: "#",
-					},
-					{
-						title: "Limits",
-						url: "#",
-					},
-				],
-			},
-		],
-		projects: [
-			{
-				name: "Design Engineering",
-				url: "#",
-				icon: FrameIcon,
-			},
-			{
-				name: "Sales & Marketing",
-				url: "#",
-				icon: ChartPieIcon,
-			},
-			{
-				name: "Travel",
-				url: "#",
-				icon: MapIcon,
-			},
-		],
-	};
-</script>
-
 <script lang="ts">
-	import NavMain from "./nav-main.svelte";
-	import NavProjects from "./nav-projects.svelte";
-	import NavUser from "./nav-user.svelte";
-	import TeamSwitcher from "./team-switcher.svelte";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import type { ComponentProps } from "svelte";
+  import NavMain from "./nav-main.svelte";
+  import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+  import type { ComponentProps } from "svelte";
+  const version = __APP_VERSION__;
 
-	let {
-		ref = $bindable(null),
-		collapsible = "icon",
-		...restProps
-	}: ComponentProps<typeof Sidebar.Root> = $props();
+  // Icons
+  import favicon from "$lib/assets/favicon.png";
+  import {
+    ChartLine,
+    Gauge,
+    ReceiptText,
+    Settings2,
+    UtensilsCrossed,
+  } from "@lucide/svelte";
+
+  // ─── Navigation data ──────────────────────────────────────────
+  const navMain = [
+    {
+      title: "仪表盘",
+      url: "/dashboard",
+      icon: Gauge,
+      isActive: true,
+    },
+    {
+      title: "菜品管理",
+      url: "/dashboard/dishes",
+      icon: UtensilsCrossed,
+      isActive: true,
+    },
+    {
+      title: "订单",
+      url: "/dashboard/orders",
+      icon: ReceiptText,
+      isActive: true,
+    },
+    {
+      title: "统计",
+      url: "/dashboard/stats",
+      icon: ChartLine,
+      isActive: true,
+    },
+  ];
+
+  let {
+    ref = $bindable(null),
+    collapsible = "icon",
+    ...restProps
+  }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
 <Sidebar.Root bind:ref {collapsible} {...restProps}>
-	<Sidebar.Header>
-		<TeamSwitcher teams={data.teams} />
-	</Sidebar.Header>
-	<Sidebar.Content>
-		<NavMain items={data.navMain} />
-		<NavProjects projects={data.projects} />
-	</Sidebar.Content>
-	<Sidebar.Footer>
-		<NavUser user={data.user} />
-	</Sidebar.Footer>
-	<Sidebar.Rail />
+  <Sidebar.Header>
+    <div class="flex items-center gap-2 px-2 py-1">
+      <div
+        class="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
+      >
+        <img src={favicon} alt="Logo" class="size-8" />
+      </div>
+      <div class="grid flex-1 text-start text-sm leading-tight">
+        <span class="truncate font-semibold">Mens</span>
+        <span class="truncate text-xs text-sidebar-foreground/60"
+          >餐饮管理系统</span
+        >
+      </div>
+    </div>
+  </Sidebar.Header>
+  <Sidebar.Content>
+    <NavMain items={navMain} />
+  </Sidebar.Content>
+  <Sidebar.Footer>
+    <Sidebar.Menu>
+      <Sidebar.MenuItem>
+        <Sidebar.MenuButton tooltipContent="系统设置">
+          {#snippet child({ props })}
+            <a href="/dashboard/settings" {...props}>
+              <Settings2 />
+              <span>设置</span>
+            </a>
+          {/snippet}
+        </Sidebar.MenuButton>
+      </Sidebar.MenuItem>
+    </Sidebar.Menu>
+    <Sidebar.Separator />
+    <div class="flex flex-col gap-1 p-2">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold">Mens</span>
+      </div>
+      <span class="text-xs text-muted-foreground">Version {version}</span>
+    </div>
+  </Sidebar.Footer>
+  <Sidebar.Rail />
 </Sidebar.Root>
