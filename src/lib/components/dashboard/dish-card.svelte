@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Pencil, Trash2 } from "@lucide/svelte";
   import type { Dish } from "$lib/stores/dish-store";
-  import { categoryStyle, effectivePrice, discountDisplay } from "$lib/stores/admin-store";
+  import { categoryStyle, effectivePrice, discountDisplay } from "$lib/stores/dish-store";
   import * as Button from "$lib/components/ui/button/index.js";
 
   let {

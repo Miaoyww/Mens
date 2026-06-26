@@ -11,10 +11,9 @@
   } from "$lib/stores/dish-store";
   import { fly } from "svelte/transition";
   import {
+    Check,
     Plus,
     Search,
-    ChevronLeft,
-    RefreshCw,
     UtensilsCrossed,
     TriangleAlert,
     X,
@@ -23,7 +22,7 @@
   import DishFormDialog from "$lib/components/dialog/dish-form-dialog.svelte";
   import DishDeleteDialog from "$lib/components/dialog/dish-delete-dialog.svelte";
 
-  import { categoryOptions } from "$lib/stores/admin-store";
+  import { categoryOptions } from "$lib/stores/dish-store";
   import { openDisplayWindow } from "$lib/utils/display-window";
   import * as Card from "$lib/components/ui/card/index.js";
   import * as Button from "$lib/components/ui/button/index.js";
@@ -166,7 +165,7 @@
                 variant={filterCategory === opt.value ? "secondary" : "ghost"}
                 size="xs"
                 onclick={() => (filterCategory = opt.value)}
-                >{opt.emoji} {opt.label}</Button.Root
+                >{opt.label}</Button.Root
               >
             {/each}
           </div>
@@ -238,16 +237,7 @@
     transition:fly={{ y: -16, duration: 250 }}
     class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium pointer-events-none"
   >
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="3"
-      stroke-linecap="round"
-      stroke-linejoin="round"><polyline points="20,6 9,17 4,12" /></svg
-    >
+    <Check size={14} />
     {successMsg}
   </div>
 {/if}
@@ -258,9 +248,11 @@
   >
     <TriangleAlert size={14} />
     {globalError}
-    <button
+    <Button.Root
+      variant="ghost"
+      size="icon-xs"
       onclick={() => (globalError = "")}
-      class="ml-2 opacity-70 hover:opacity-100"><X size={13} /></button
+      class="ml-2 opacity-70 hover:opacity-100"><X size={13} /></Button.Root
     >
   </div>
 {/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Save, Loader2, TriangleAlert } from "@lucide/svelte";
   import type { Dish, DishCategory } from "$lib/stores/dish-store";
-  import { categoryOptions, effectivePrice, discountDisplay } from "$lib/stores/admin-store";
+  import { categoryOptions, effectivePrice, discountDisplay } from "$lib/stores/dish-store";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import * as Input from "$lib/components/ui/input/index.js";
   import * as Label from "$lib/components/ui/label/index.js";

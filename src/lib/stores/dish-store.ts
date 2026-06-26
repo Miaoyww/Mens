@@ -38,3 +38,30 @@ export async function deleteDish(id: string): Promise<void> {
     await apiDeleteDish(id);
     dishes.update((list) => list.filter((d) => d.id !== id));
 }
+
+// ── Category options & styles ────────────────────────────────────────────────
+
+export const categoryOptions: { value: DishCategory; label: string }[] = [
+    { value: 'hot', label: '热菜' },
+    { value: 'cold', label: '冷菜' },
+    { value: 'soup', label: '汤' }
+];
+
+export const categoryStyle: Record<string, { text: string; classes: string }> = {
+    hot: { text: '热菜', classes: 'bg-orange-100 text-orange-700 border border-orange-200' },
+    cold: { text: '冷菜', classes: 'bg-sky-100 text-sky-700 border border-sky-200' },
+    soup: { text: '汤', classes: 'bg-amber-100 text-amber-700 border border-amber-200' }
+};
+
+// ── Price helpers ────────────────────────────────────────────────────────────
+
+export function effectivePrice(price: number | string, discount: number): string {
+    const result = (typeof price === 'string' ? parseFloat(price) : price) * discount;
+    return result % 1 === 0 ? result.toFixed(0) : result.toFixed(1);
+}
+
+export function discountDisplay(d: number): string {
+    if (d >= 1) return '原价';
+    const val = d * 10;
+    return `${val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)}折`;
+}
