@@ -1,9 +1,5 @@
 import { writable } from 'svelte/store';
 
-// ── Settings dialog ────────────────────────────────────────────────────────
-
-export const settingsDialogOpen = writable(false);
-
 // ── Sidebar ────────────────────────────────────────────────────────────────
 
 export const sidebarOpen = writable(true);

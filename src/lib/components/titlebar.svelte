@@ -4,7 +4,7 @@
   import { MENS_NAME } from "$lib/const";
   import { Button } from "$lib/components/ui/button";
   import { isTauri } from "@tauri-apps/api/core";
-  import { settingsDialogOpen, sidebarOpen } from "$lib/stores/global-ui-store";
+  import { sidebarOpen } from "$lib/stores/global-ui-store";
   import favicon from "$lib/assets/favicon.png";
   import { onMount } from "svelte";
   import { page } from "$app/state";
@@ -86,7 +86,7 @@
       <Button
         class="flex items-center justify-center px-3 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         variant="ghost"
-        onclick={() => settingsDialogOpen.set(true)}
+        onclick={() => goto("/dashboard/settings")}
         title="设置"
       >
         <Settings size={14} />

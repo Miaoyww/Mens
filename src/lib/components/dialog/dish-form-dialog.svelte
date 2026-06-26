@@ -82,7 +82,7 @@
 </script>
 
 <Dialog.Root bind:open>
-  <Dialog.Content on:close={onclose} class="sm:max-w-md">
+  <Dialog.Content onclose={onclose} class="sm:max-w-md">
     <Dialog.Header>
       <Dialog.Title>{mode === "add" ? "添加菜品" : "编辑菜品"}</Dialog.Title>
       <Dialog.Description>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import "../app.css";
-  import SettingsDialog from "$lib/components/settings/settings-dialog.svelte";
   import TitleBar from "$lib/components/titlebar.svelte";
   import { isTauri } from "@tauri-apps/api/core";
   import { globalSettings } from "$lib/stores/global-settings-store";
@@ -24,7 +23,6 @@
 </script>
 
 <TitleBar />
-<SettingsDialog />
 
 <div class={isTauri() ? "pt-9" : ""}>
   <main class="h-[calc(100vh-2.5rem)] overflow-hidden">

@@ -19,9 +19,9 @@
     TriangleAlert,
     X,
   } from "@lucide/svelte";
-  import AdminDishCard from "$lib/components/dashboard/dish-card.svelte";
-  import AdminDishFormDialog from "$lib/components/dialog/admin-dish-form-dialog.svelte";
-  import AdminDeleteDialog from "$lib/components/dialog/admin-delete-dialog.svelte";
+  import DishCard from "$lib/components/dashboard/dish-card.svelte";
+  import DishFormDialog from "$lib/components/dialog/dish-form-dialog.svelte";
+  import DishDeleteDialog from "$lib/components/dialog/dish-delete-dialog.svelte";
 
   import { categoryOptions } from "$lib/stores/admin-store";
   import { openDisplayWindow } from "$lib/utils/display-window";
@@ -127,52 +127,18 @@
   });
 </script>
 
-<!-- TOASTS -->
-{#if successMsg}
-  <div
-    transition:fly={{ y: -16, duration: 250 }}
-    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium pointer-events-none"
-  >
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="3"
-      stroke-linecap="round"
-      stroke-linejoin="round"><polyline points="20,6 9,17 4,12" /></svg
-    >
-    {successMsg}
+<main in:fly={{ y: 12, duration: 220, opacity: 0 }} class="flex flex-col gap-6">
+  <!-- PAGE HEADER -->
+  <div class="flex items-start justify-between gap-4">
+    <div class="space-y-1">
+      <h1 class="text-xl font-semibold tracking-tight">菜品管理</h1>
+      <p class="text-sm text-muted-foreground">调整、编辑和删除菜品.</p>
+    </div>
   </div>
-{/if}
-{#if globalError}
-  <div
-    transition:fly={{ y: -16, duration: 250 }}
-    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-destructive text-destructive-foreground px-4 py-2 rounded-lg shadow-lg text-sm font-medium"
-  >
-    <TriangleAlert size={14} />
-    {globalError}
-    <button
-      onclick={() => (globalError = "")}
-      class="ml-2 opacity-70 hover:opacity-100"><X size={13} /></button
-    >
-  </div>
-{/if}
-<main in:fly={{ y: 12, duration: 220, opacity: 0 }}>
   <!-- 菜品管理 -->
   <Card.Root>
     <Card.Header class="pb-0 ">
       <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <div class="flex items-center gap-2 shrink-0">
-          <UtensilsCrossed size={16} class="text-muted-foreground" />
-          <Card.Title class="text-base">菜品管理</Card.Title>
-          <span
-            class="bg-muted text-muted-foreground text-xs font-medium px-2 py-0.5 rounded-md"
-          >
-            {filteredDishes.length} 道
-          </span>
-        </div>
         <div
           class="flex flex-wrap items-center gap-2 sm:ml-auto w-full sm:w-auto"
         >
@@ -257,7 +223,7 @@
             </thead>
             <tbody>
               {#each filteredDishes as dish (dish.id)}
-                <AdminDishCard {dish} onedit={openEdit} ondelete={openDelete} />
+                <DishCard {dish} onedit={openEdit} ondelete={openDelete} />
               {/each}
             </tbody>
           </table>
@@ -266,9 +232,40 @@
     </Card.Content>
   </Card.Root>
 </main>
-
+<!-- TOASTS -->
+{#if successMsg}
+  <div
+    transition:fly={{ y: -16, duration: 250 }}
+    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-emerald-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium pointer-events-none"
+  >
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"><polyline points="20,6 9,17 4,12" /></svg
+    >
+    {successMsg}
+  </div>
+{/if}
+{#if globalError}
+  <div
+    transition:fly={{ y: -16, duration: 250 }}
+    class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-destructive text-destructive-foreground px-4 py-2 rounded-lg shadow-lg text-sm font-medium"
+  >
+    <TriangleAlert size={14} />
+    {globalError}
+    <button
+      onclick={() => (globalError = "")}
+      class="ml-2 opacity-70 hover:opacity-100"><X size={13} /></button
+    >
+  </div>
+{/if}
 <!-- 添加/编辑弹窗 -->
-<AdminDishFormDialog
+<DishFormDialog
   bind:open={showFormDialog}
   mode={dialogMode}
   dish={editingDish}
@@ -277,7 +274,7 @@
 />
 
 <!-- 删除确认弹窗 -->
-<AdminDeleteDialog
+<DishDeleteDialog
   bind:open={showDeleteDialog}
   dish={deletingDish}
   onconfirm={handleDelete}

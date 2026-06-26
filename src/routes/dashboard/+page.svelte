@@ -1,4 +1,4 @@
-<script lang="ts">
+  <script lang="ts">
   import StatsCard from "$lib/components/dashboard/stats-card.svelte";
   import OrderCard from "$lib/components/dashboard/order-card.svelte";
   import WindowCard from "$lib/components/dashboard/window-card.svelte";

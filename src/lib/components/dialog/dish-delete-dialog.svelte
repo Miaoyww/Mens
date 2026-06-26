@@ -28,7 +28,7 @@
 </script>
 
 <AlertDialog.Root bind:open>
-  <AlertDialog.Content on:close={onclose}>
+  <AlertDialog.Content onclose={onclose}>
     <AlertDialog.Header>
       <div class="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-2">
         <Trash2 size={20} class="text-destructive" />

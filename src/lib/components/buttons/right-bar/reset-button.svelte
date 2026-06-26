@@ -2,8 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { RotateCcw } from '@lucide/svelte';
 
-	import { settingsDialogOpen } from '$lib/stores/global-ui-store';
-	import { tweened } from 'svelte/motion';
+		import { tweened } from 'svelte/motion';
 	import { cubicInOut, linear } from 'svelte/easing';
 
 	// 旋转角度动画
